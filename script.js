@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const generateGridButton = document.getElementById("generateGrid");
   const saveGridButton = document.getElementById("saveGrid");
   const loadGridInput = document.getElementById("loadGrid");
+  const loadImageInput = document.getElementById("loadImage");
+  const backgroundImage = document.getElementById("backgroundImage");
 
   generateGridButton.addEventListener("click", () => {
     generateGrid(rowsInput.value, colsInput.value);
@@ -13,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   saveGridButton.addEventListener("click", saveGrid);
   loadGridInput.addEventListener("change", loadGrid);
+  loadImageInput.addEventListener("change", loadImage);
 
   function generateGrid(rows, cols) {
     gridContainer.innerHTML = "";
@@ -71,6 +74,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     };
     reader.readAsText(file);
+  }
+
+  function loadImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      backgroundImage.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   generateGrid(rowsInput.value, colsInput.value);

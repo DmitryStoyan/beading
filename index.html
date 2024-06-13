@@ -17,12 +17,16 @@
         <button id="generateGrid">Создать сетку</button>
         <button id="saveGrid">Сохранить</button>
         <input type="file" id="loadGrid" accept=".json" />
+        <input type="file" id="loadImage" accept="image/*" />
       </div>
       <div class="color-picker">
         <label for="color">Выберите цвет:</label>
         <input type="color" id="color" value="#000000" />
       </div>
-      <div id="grid" class="grid"></div>
+      <div id="gridContainer" class="grid-container">
+        <img id="backgroundImage" class="background-image" alt="Background" />
+        <div id="grid" class="grid"></div>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>
