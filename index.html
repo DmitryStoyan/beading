@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Схема бисероплетения</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Создание схем бисероплетения</h1>
+      <div class="controls">
+        <label for="rows">Строки:</label>
+        <input type="number" id="rows" min="1" max="50" value="10" />
+        <label for="cols">Столбцы:</label>
+        <input type="number" id="cols" min="1" max="50" value="10" />
+        <button id="generateGrid">Создать сетку</button>
+        <button id="saveGrid">Сохранить</button>
+        <input type="file" id="loadGrid" accept=".json" />
+      </div>
+      <div class="color-picker">
+        <label for="color">Выберите цвет:</label>
+        <input type="color" id="color" value="#000000" />
+      </div>
+      <div id="grid" class="grid"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
