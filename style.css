@@ -8,6 +8,10 @@ body {
   margin: 0;
 }
 
+.load-wrapper {
+  margin: 30px 0;
+}
+
 .container {
   text-align: center;
   background: white;
@@ -17,8 +21,43 @@ body {
 }
 
 .controls,
+.image-size-controls,
 .color-picker {
   margin-bottom: 20px;
+}
+
+.grid-wrapper {
+  display: flex;
+  position: relative;
+  justify-content: center;
+}
+
+.row-numbers,
+.column-numbers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.color-picker {
+  margin-bottom: 40px;
+}
+
+.row-numbers {
+  left: 200px;
+}
+
+.column-numbers {
+  flex-direction: row;
+  top: -20px;
+}
+
+.column-numbers div {
+  margin-right: 13px;
 }
 
 .grid-container {
@@ -52,4 +91,9 @@ body {
   background-color: #fff;
   border: 1px solid #ccc;
   cursor: pointer;
+}
+
+.beads-count {
+  margin-top: 20px;
+  text-align: left;
 }

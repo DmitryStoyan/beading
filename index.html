@@ -15,18 +15,38 @@
         <label for="cols">Столбцы:</label>
         <input type="number" id="cols" min="1" max="50" value="10" />
         <button id="generateGrid">Создать сетку</button>
-        <button id="saveGrid">Сохранить</button>
-        <input type="file" id="loadGrid" accept=".json" />
-        <input type="file" id="loadImage" accept="image/*" />
+        <button id="saveGrid">Сохранить схему</button>
+        <div class="load-wrapper">
+          <label for="file">Открыть схему</label>
+          <input type="file" id="loadGrid" accept=".json" />
+        </div>
+
+        <div class="load-wrapper">
+          <label for="file">Загрузить изображение</label>
+          <input type="file" id="loadImage" accept="image/*" />
+        </div>
+        <button id="countBeads">Посчитать биссер</button>
+        <button id="downloadImage">Скачать как изображение</button>
+      </div>
+      <div class="image-size-controls">
+        <label for="imageWidth">Ширина изображения (px):</label>
+        <input type="number" id="imageWidth" min="1" />
+        <label for="imageHeight">Высота изображения (px):</label>
+        <input type="number" id="imageHeight" min="1" />
       </div>
       <div class="color-picker">
         <label for="color">Выберите цвет:</label>
         <input type="color" id="color" value="#000000" />
       </div>
-      <div id="gridContainer" class="grid-container">
-        <img id="backgroundImage" class="background-image" alt="Background" />
-        <div id="grid" class="grid"></div>
+      <div class="grid-wrapper">
+        <div class="row-numbers" id="rowNumbers"></div>
+        <div class="column-numbers" id="columnNumbers"></div>
+        <div id="gridContainer" class="grid-container">
+          <img id="backgroundImage" class="background-image" alt="Background" />
+          <div id="grid" class="grid"></div>
+        </div>
       </div>
+      <div id="beadsCount" class="beads-count"></div>
     </div>
     <script src="script.js"></script>
   </body>
