@@ -21,7 +21,8 @@ body {
 
 .controls,
 .image-size-controls,
-.color-picker {
+.color-picker,
+.quick-colors {
   margin-bottom: 20px;
 }
 
@@ -73,8 +74,8 @@ body {
   object-fit: cover;
   opacity: 0.5;
   z-index: 3;
-  pointer-events: none;
-  cursor: move;
+  cursor: default;
+  pointer-events: none; /* По умолчанию для режима покраски */
 }
 
 .grid {
@@ -114,4 +115,24 @@ body {
 
 #toggleDragMode:hover {
   background-color: #5a6268;
+}
+
+.quick-colors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#usedColors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  cursor: pointer;
 }

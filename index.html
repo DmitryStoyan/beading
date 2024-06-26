@@ -17,11 +17,12 @@
         <button id="generateGrid">Создать сетку</button>
         <button id="saveGrid">Сохранить схему</button>
         <div class="load-wrapper">
-          <label for="loadGrid">Открыть схему</label>
+          <label for="file">Открыть схему</label>
           <input type="file" id="loadGrid" accept=".json" />
         </div>
+
         <div class="load-wrapper">
-          <label for="loadImage">Загрузить изображение</label>
+          <label for="file">Загрузить изображение</label>
           <input type="file" id="loadImage" accept="image/*" />
         </div>
         <button id="countBeads">Посчитать биссер</button>
@@ -37,6 +38,10 @@
       <div class="color-picker">
         <label for="color">Выберите цвет:</label>
         <input type="color" id="color" value="#000000" />
+      </div>
+      <div id="quickColors" class="quick-colors">
+        <label>Быстрый доступ к цветам:</label>
+        <div id="usedColors"></div>
       </div>
       <div class="grid-wrapper">
         <div class="row-numbers" id="rowNumbers"></div>

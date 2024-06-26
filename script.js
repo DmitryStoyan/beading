@@ -14,11 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const beadsCountContainer = document.getElementById("beadsCount");
   const downloadImageButton = document.getElementById("downloadImage");
   const toggleDragModeButton = document.getElementById("toggleDragMode");
+  const usedColorsContainer = document.getElementById("usedColors");
 
   let dragMode = false;
   let offsetX = 0;
   let offsetY = 0;
   let isDragging = false;
+  let usedColors = new Set();
 
   generateGridButton.addEventListener("click", () => {
     generateGrid(rowsInput.value, colsInput.value);
@@ -91,10 +93,25 @@ document.addEventListener("DOMContentLoaded", () => {
       cell.classList.add("cell");
       cell.addEventListener("click", () => {
         if (!dragMode) {
-          cell.style.backgroundColor = colorPicker.value;
+          const color = colorPicker.value;
+          cell.style.backgroundColor = color;
+          addUsedColor(color);
         }
       });
       gridContainer.appendChild(cell);
+    }
+  }
+
+  function addUsedColor(color) {
+    if (!usedColors.has(color)) {
+      usedColors.add(color);
+      const colorSwatch = document.createElement("div");
+      colorSwatch.classList.add("color-swatch");
+      colorSwatch.style.backgroundColor = color;
+      colorSwatch.addEventListener("click", () => {
+        colorPicker.value = color;
+      });
+      usedColorsContainer.appendChild(colorSwatch);
     }
   }
 
@@ -137,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cells = gridContainer.children;
       gridData.colors.forEach((color, index) => {
         cells[index].style.backgroundColor = color;
+        addUsedColor(color);
       });
     };
     reader.readAsText(file);
@@ -194,18 +212,75 @@ document.addEventListener("DOMContentLoaded", () => {
       "rgb(255, 255, 0)": "Желтый",
       "rgb(0, 255, 255)": "Голубой",
       "rgb(255, 0, 255)": "Фиолетовый",
+      // Добавьте больше цветов при необходимости
     };
     return colors[color] || color;
   }
 
   function downloadImage() {
-    const gridWrapper = document.querySelector(".grid-wrapper");
-    html2canvas(gridWrapper).then((canvas) => {
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL();
-      link.download = "beading_pattern.png";
-      link.click();
-    });
+    const rows = rowsInput.value;
+    const cols = colsInput.value;
+    const cellSize = 20; // размер одной ячейки
+    const labelSize = 20; // размер разметки
+
+    const canvas = document.createElement("canvas");
+    canvas.width = cols * cellSize + labelSize;
+    canvas.height = rows * cellSize + labelSize;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = "12px Arial";
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    for (let i = 0; i < rows; i++) {
+      ctx.fillText(
+        i + 1,
+        labelSize / 2,
+        labelSize + i * cellSize + cellSize / 2
+      );
+    }
+
+    for (let j = 0; j < cols; j++) {
+      ctx.fillText(
+        j + 1,
+        labelSize + j * cellSize + cellSize / 2,
+        labelSize / 2
+      );
+    }
+
+    const cells = gridContainer.children;
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const index = row * cols + col;
+        const color = cells[index].style.backgroundColor;
+        if (color) {
+          ctx.fillStyle = color;
+          ctx.fillRect(
+            labelSize + col * cellSize,
+            labelSize + row * cellSize,
+            cellSize,
+            cellSize
+          );
+        }
+        ctx.strokeStyle = "#ccc";
+        ctx.strokeRect(
+          labelSize + col * cellSize,
+          labelSize + row * cellSize,
+          cellSize,
+          cellSize
+        );
+      }
+    }
+
+    // Сохранение изображения
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "beading_pattern.png";
+    link.click();
   }
 
   generateGrid(rowsInput.value, colsInput.value);
