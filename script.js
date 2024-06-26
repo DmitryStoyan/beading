@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
   countBeadsButton.addEventListener("click", countBeads);
   downloadImageButton.addEventListener("click", downloadImage);
   toggleDragModeButton.addEventListener("click", toggleDragMode);
+  imageWidthInput.addEventListener("input", updateImageSize);
+  imageHeightInput.addEventListener("input", updateImageSize);
 
   backgroundImage.addEventListener("mousedown", startDrag);
   window.addEventListener("mouseup", stopDrag);
@@ -167,19 +169,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const reader = new FileReader();
     reader.onload = function (e) {
       backgroundImage.src = e.target.result;
-      resizeImage();
+      updateImageSize();
     };
     reader.readAsDataURL(file);
   }
 
-  function resizeImage() {
-    const width = imageWidthInput.value;
-    const height = imageHeightInput.value;
-    if (width) {
-      backgroundImage.style.width = `${width}px`;
+  function updateImageSize() {
+    const imageWidth = imageWidthInput.value;
+    const imageHeight = imageHeightInput.value;
+    if (imageWidth) {
+      backgroundImage.style.width = `${imageWidth}px`;
     }
-    if (height) {
-      backgroundImage.style.height = `${height}px`;
+    if (imageHeight) {
+      backgroundImage.style.height = `${imageHeight}px`;
     }
   }
 
