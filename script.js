@@ -70,21 +70,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function generateGrid(rows, cols) {
     gridContainer.innerHTML = "";
-    const rowNumbers = document.getElementById("rowNumbers");
-    const columnNumbers = document.getElementById("columnNumbers");
-    rowNumbers.innerHTML = "";
-    columnNumbers.innerHTML = "";
 
     for (let i = 0; i < rows; i++) {
       const rowNum = document.createElement("div");
       rowNum.textContent = i + 1;
-      rowNumbers.appendChild(rowNum);
     }
 
     for (let i = 0; i < cols; i++) {
       const colNum = document.createElement("div");
       colNum.textContent = i + 1;
-      columnNumbers.appendChild(colNum);
     }
 
     gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
@@ -214,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
       "rgb(255, 255, 0)": "Желтый",
       "rgb(0, 255, 255)": "Голубой",
       "rgb(255, 0, 255)": "Фиолетовый",
-      // Добавьте больше цветов при необходимости
     };
     return colors[color] || color;
   }
@@ -222,8 +215,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function downloadImage() {
     const rows = rowsInput.value;
     const cols = colsInput.value;
-    const cellSize = 20; // размер одной ячейки
-    const labelSize = 20; // размер разметки
+    const cellSize = 20;
+    const labelSize = 20;
 
     const canvas = document.createElement("canvas");
     canvas.width = cols * cellSize + labelSize;
@@ -268,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
             cellSize
           );
         }
-        ctx.strokeStyle = "#ccc";
+        ctx.strokeStyle = "#000000";
         ctx.strokeRect(
           labelSize + col * cellSize,
           labelSize + row * cellSize,
