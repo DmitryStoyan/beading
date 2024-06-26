@@ -11,10 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const imageWidthInput = document.getElementById("imageWidth");
   const imageHeightInput = document.getElementById("imageHeight");
   const countBeadsButton = document.getElementById("countBeads");
-  const downloadImageButton = document.getElementById("downloadImage");
   const beadsCountContainer = document.getElementById("beadsCount");
-  const rowNumbers = document.getElementById("rowNumbers");
-  const columnNumbers = document.getElementById("columnNumbers");
+  const downloadImageButton = document.getElementById("downloadImage");
+  const toggleDragModeButton = document.getElementById("toggleDragMode");
+
+  let dragMode = false;
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDragging = false;
 
   generateGridButton.addEventListener("click", () => {
     generateGrid(rowsInput.value, colsInput.value);
@@ -25,35 +29,70 @@ document.addEventListener("DOMContentLoaded", () => {
   loadImageInput.addEventListener("change", loadImage);
   countBeadsButton.addEventListener("click", countBeads);
   downloadImageButton.addEventListener("click", downloadImage);
+  toggleDragModeButton.addEventListener("click", toggleDragMode);
 
-  imageWidthInput.addEventListener("input", updateImageSize);
-  imageHeightInput.addEventListener("input", updateImageSize);
+  backgroundImage.addEventListener("mousedown", startDrag);
+  window.addEventListener("mouseup", stopDrag);
+  window.addEventListener("mousemove", drag);
+
+  function startDrag(event) {
+    if (dragMode) {
+      offsetX = event.clientX - backgroundImage.offsetLeft;
+      offsetY = event.clientY - backgroundImage.offsetTop;
+      isDragging = true;
+    }
+  }
+
+  function stopDrag() {
+    isDragging = false;
+  }
+
+  function drag(event) {
+    if (isDragging && dragMode) {
+      backgroundImage.style.left = `${event.clientX - offsetX}px`;
+      backgroundImage.style.top = `${event.clientY - offsetY}px`;
+    }
+  }
+
+  function toggleDragMode() {
+    dragMode = !dragMode;
+    toggleDragModeButton.classList.toggle("active", dragMode);
+    toggleDragModeButton.textContent = dragMode
+      ? "Режим раскрашивания"
+      : "Сдвинуть картинку";
+    backgroundImage.style.cursor = dragMode ? "move" : "default";
+    backgroundImage.style.pointerEvents = dragMode ? "auto" : "none";
+  }
 
   function generateGrid(rows, cols) {
     gridContainer.innerHTML = "";
-    gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-    gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
+    const rowNumbers = document.getElementById("rowNumbers");
+    const columnNumbers = document.getElementById("columnNumbers");
     rowNumbers.innerHTML = "";
     columnNumbers.innerHTML = "";
 
     for (let i = 0; i < rows; i++) {
-      const rowNumber = document.createElement("div");
-      rowNumber.textContent = i + 1;
-      rowNumbers.appendChild(rowNumber);
+      const rowNum = document.createElement("div");
+      rowNum.textContent = i + 1;
+      rowNumbers.appendChild(rowNum);
     }
 
-    for (let j = 0; j < cols; j++) {
-      const colNumber = document.createElement("div");
-      colNumber.textContent = j + 1;
-      columnNumbers.appendChild(colNumber);
+    for (let i = 0; i < cols; i++) {
+      const colNum = document.createElement("div");
+      colNum.textContent = i + 1;
+      columnNumbers.appendChild(colNum);
     }
+
+    gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
     for (let i = 0; i < rows * cols; i++) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
       cell.addEventListener("click", () => {
-        cell.style.backgroundColor = colorPicker.value;
+        if (!dragMode) {
+          cell.style.backgroundColor = colorPicker.value;
+        }
       });
       gridContainer.appendChild(cell);
     }
@@ -110,130 +149,63 @@ document.addEventListener("DOMContentLoaded", () => {
     const reader = new FileReader();
     reader.onload = function (e) {
       backgroundImage.src = e.target.result;
-      updateImageSize();
+      resizeImage();
     };
     reader.readAsDataURL(file);
   }
 
-  function updateImageSize() {
-    const imageWidth = imageWidthInput.value;
-    const imageHeight = imageHeightInput.value;
-    if (imageWidth) {
-      backgroundImage.style.width = `${imageWidth}px`;
+  function resizeImage() {
+    const width = imageWidthInput.value;
+    const height = imageHeightInput.value;
+    if (width) {
+      backgroundImage.style.width = `${width}px`;
     }
-    if (imageHeight) {
-      backgroundImage.style.height = `${imageHeight}px`;
+    if (height) {
+      backgroundImage.style.height = `${height}px`;
     }
   }
 
   function countBeads() {
+    const colorsMap = {};
     const cells = gridContainer.children;
-    const colorCounts = {};
-
     for (let cell of cells) {
       const color = cell.style.backgroundColor;
       if (color) {
-        const colorName = getColorName(color);
-        if (colorCounts[colorName]) {
-          colorCounts[colorName]++;
-        } else {
-          colorCounts[colorName] = 1;
-        }
+        colorsMap[color] = (colorsMap[color] || 0) + 1;
       }
     }
 
     beadsCountContainer.innerHTML = "";
-    for (const [color, count] of Object.entries(colorCounts)) {
-      const colorElement = document.createElement("div");
-      colorElement.textContent = `${color}: ${count}`;
-      beadsCountContainer.appendChild(colorElement);
+    for (let [color, count] of Object.entries(colorsMap)) {
+      const colorName = getColorName(color);
+      const countElement = document.createElement("div");
+      countElement.textContent = `${colorName}: ${count}`;
+      beadsCountContainer.appendChild(countElement);
     }
   }
 
-  function getColorName(rgbColor) {
+  function getColorName(color) {
     const colors = {
-      "rgb(0, 0, 0)": "Чёрный",
+      "rgb(0, 0, 0)": "Черный",
       "rgb(255, 255, 255)": "Белый",
       "rgb(255, 0, 0)": "Красный",
-      "rgb(0, 255, 0)": "Зелёный",
+      "rgb(0, 255, 0)": "Зеленый",
       "rgb(0, 0, 255)": "Синий",
-      "rgb(255, 255, 0)": "Жёлтый",
+      "rgb(255, 255, 0)": "Желтый",
       "rgb(0, 255, 255)": "Голубой",
       "rgb(255, 0, 255)": "Фиолетовый",
-      "rgb(128, 0, 0)": "Бордовый",
-      "rgb(128, 128, 0)": "Оливковый",
-      "rgb(0, 128, 0)": "Зелёный",
-      "rgb(128, 0, 128)": "Фиолетовый",
-      "rgb(0, 128, 128)": "Сине-зелёный",
-      "rgb(0, 0, 128)": "Тёмно-синий",
     };
-    return colors[rgbColor] || rgbColor;
+    return colors[color] || color;
   }
 
   function downloadImage() {
-    const rows = rowsInput.value;
-    const cols = colsInput.value;
-    const cellSize = 20; // размер одной ячейки
-    const labelSize = 20; // размер разметки
-
-    const canvas = document.createElement("canvas");
-    canvas.width = cols * cellSize + labelSize;
-    canvas.height = rows * cellSize + labelSize;
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.font = "12px Arial";
-    ctx.fillStyle = "#000";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    for (let i = 0; i < rows; i++) {
-      ctx.fillText(
-        i + 1,
-        labelSize / 2,
-        labelSize + i * cellSize + cellSize / 2
-      );
-    }
-
-    for (let j = 0; j < cols; j++) {
-      ctx.fillText(
-        j + 1,
-        labelSize + j * cellSize + cellSize / 2,
-        labelSize / 2
-      );
-    }
-
-    const cells = gridContainer.children;
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        const index = row * cols + col;
-        const color = cells[index].style.backgroundColor;
-        if (color) {
-          ctx.fillStyle = color;
-          ctx.fillRect(
-            labelSize + col * cellSize,
-            labelSize + row * cellSize,
-            cellSize,
-            cellSize
-          );
-        }
-        ctx.strokeStyle = "#ccc";
-        ctx.strokeRect(
-          labelSize + col * cellSize,
-          labelSize + row * cellSize,
-          cellSize,
-          cellSize
-        );
-      }
-    }
-
-    // Сохранение изображения
-    const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = "beading_pattern.png";
-    link.click();
+    const gridWrapper = document.querySelector(".grid-wrapper");
+    html2canvas(gridWrapper).then((canvas) => {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL();
+      link.download = "beading_pattern.png";
+      link.click();
+    });
   }
 
   generateGrid(rowsInput.value, colsInput.value);
